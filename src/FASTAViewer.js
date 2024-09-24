@@ -8,7 +8,7 @@ const FASTAViewer = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [pastedSequence, setPastedSequence] = useState('');
-    const [isInputExpanded, setIsInputExpanded] = useState(false);
+    const [isInputExpanded, setIsInputExpanded] = useState(true);
     const [jumpPosition, setJumpPosition] = useState('');
     const sequenceWidth = 60;
     const fileInputRef = useRef(null);
@@ -39,6 +39,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         });
         setSequences(parsedSequences);
         resetState();
+        setIsInputExpanded(false);
     };
 
     const handleFileUpload = (event) => {
@@ -50,6 +51,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                 const parsedSequences = parseFasta(content);
                 setSequences(parsedSequences);
                 resetState();
+                setIsInputExpanded(false);
             };
             reader.readAsText(file);
         }
@@ -70,6 +72,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         const parsedSequences = parseFasta(pastedSequence);
         setSequences(parsedSequences);
         resetState();
+        setIsInputExpanded(false);
     };
 
     const clearHighlights = () => {
@@ -212,14 +215,6 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         });
     };
 
-    const removeColumnToLast = (columnIndex) => {
-        setSequences(prev => prev.map(seq => {
-            const chars = seq.sequence.split('');
-            const [removed] = chars.splice(columnIndex, 1);
-            chars.push(removed);
-            return { ...seq, sequence: chars.join('') };
-        }));
-    };
 
     const calculateActualPosition = (sequence, index) => {
         return sequence.slice(0, index).replace(/-/g, '').length + 1;
@@ -295,26 +290,6 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                 </button>
                             </div>
                         </div>
-                        <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-                            <XCircle size={20} className="inline mr-2" />
-                            Clear Highlights
-                        </button>
-                        <div className="flex items-center space-x-2">
-                            <input
-                                type="number"
-                                value={jumpPosition}
-                                onChange={(e) => setJumpPosition(e.target.value)}
-                                placeholder="Jump to position"
-                                className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <button
-                                onClick={handleJumpToPosition}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                            >
-                                <ArrowRight size={20} className="inline mr-2" />
-                                Jump
-                            </button>
-                        </div>
                     </div>
                     <div>
                         <textarea
@@ -333,16 +308,32 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     </div>
                 </div>
             )}
+            <div className="mb-4 flex flex-wrap items-center gap-4 justify-center">
+                <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    <XCircle size={20} className="inline mr-2" />
+                    Clear Highlights
+                </button>
+                <div className="flex items-center space-x-2">
+                    <input
+                        type="number"
+                        value={jumpPosition}
+                        onChange={(e) => setJumpPosition(e.target.value)}
+                        placeholder="Jump to position"
+                        className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                        onClick={handleJumpToPosition}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                        <ArrowRight size={20} className="inline mr-2" />
+                        Jump
+                    </button>
+                </div>
+            </div>
             {sequences.length > 0 ? (
                 <>
-                    <div className="mb-6 flex justify-between items-center">
-                        <button 
-                            onClick={() => removeColumnToLast(currentPage * sequenceWidth)} 
-                            className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                        >
-                            Remove First Visible Column to Last
-                        </button>
-                        <div className="flex items-center bg-gray-100 rounded-lg shadow-inner p-1">
+                <div className="mb-6 flex justify-center items-center">
+                    <div className="flex items-center bg-gray-100 rounded-lg shadow-inner p-1">
                             <button
                                 onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
                                 disabled={currentPage === 0}
