@@ -195,6 +195,10 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         }));
     };
 
+    const calculateActualPosition = (sequence, index) => {
+        return sequence.slice(0, index).replace(/-/g, '').length + 1;
+    };
+
     const renderSequence = (sequence, id) => {
         const start = currentPage * sequenceWidth;
         const end = start + sequenceWidth;
@@ -206,6 +210,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         return displayedSequence.split('').map((char, index) => {
             const absoluteIndex = start + index;
             const isHighlighted = highlightRanges.some(([start, end]) => absoluteIndex >= start && absoluteIndex < end);
+            const actualPosition = calculateActualPosition(sequence, absoluteIndex);
             return (
                 <td
                     key={index}
@@ -213,6 +218,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     ${highlightedColumns.includes(absoluteIndex) ? 'bg-yellow-200' : ''}
                     ${isHighlighted ? 'bg-green-300' : ''}`}
                     onClick={() => toggleHighlight(absoluteIndex)}
+                    title={char !== '-' ? `Actual position: ${actualPosition}` : 'Gap'}
                 >
                     {char}
                 </td>
