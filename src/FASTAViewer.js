@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle } from 'lucide-react';
 
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
@@ -60,6 +60,11 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setSearchResults([]);
         setSearchTerm('');
         setHighlightedColumns([]);
+    };
+
+    const clearHighlights = () => {
+        setHighlightedColumns([]);
+        setSearchResults([]);
     };
 
     const parseFasta = (fastaContent) => {
@@ -253,6 +258,10 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                 />
                 <button onClick={handleSearch} className="bg-blue-500 text-white p-2 rounded">
                     <Search size={20} />
+                </button>
+                <button onClick={clearHighlights} className="bg-red-500 text-white p-2 rounded">
+                    <XCircle size={20} />
+                    Clear Highlights
                 </button>
             </div>
             {sequences.length > 0 ? (
