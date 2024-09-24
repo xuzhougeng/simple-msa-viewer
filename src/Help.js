@@ -58,7 +58,8 @@ const Help = () => {
                 ["Ctrl + Z", "撤销上一步操作"],
                 ["Enter", "触发搜索或跳转操作"],
                 ["Ctrl + V", "直接粘贴序列到输入框"],
-                ["Delete", "删除选中的列"]
+                ["Delete", "删除选中的列"],
+                ["ESC", "关闭帮助窗口"]
               ].map(([key, action], index) => (
                 <li key={index} className="flex items-center">
                   <kbd className="bg-gray-200 text-gray-700 px-2 py-1 rounded mr-3 text-sm">{key}</kbd>

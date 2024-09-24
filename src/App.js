@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FASTAViewer from './FASTAViewer';
 import Help from './Help';
 import './App.css';
 
 function App() {
   const [showHelp, setShowHelp] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setShowHelp(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <div className="App relative">
