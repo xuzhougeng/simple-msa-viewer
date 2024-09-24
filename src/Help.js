@@ -1,65 +1,94 @@
 // Help.js
 
 import React from 'react';
-
 const Help = () => {
-  return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold mb-6 text-blue-600">my-fasta-viewer 用户指南</h2>
-
-      <section className="mb-8">
-        <h3 className="text-2xl font-semibold mb-4 text-blue-500">1. 布局和设计改进</h3>
-        <ul className="list-disc pl-6 space-y-2">
-          <li><strong className="text-blue-700">按钮美化：</strong> 可以调整按钮的布局、颜色和大小，以增强视觉效果和易用性。</li>
-          <li><strong className="text-blue-700">可折叠输入框：</strong> 用户可以将粘贴序列的输入区域折叠，以节省空间并保持布局紧凑。</li>
-          <li><strong className="text-blue-700">移动功能按钮：</strong> "清除高亮" 和 "跳转" 功能已移到输入选项之外，以便更轻松地访问。</li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-2xl font-semibold mb-4 text-blue-500">2. 序列输入与可视化</h3>
-        <ul className="list-disc pl-6 space-y-2">
-          <li><strong className="text-blue-700">粘贴序列进行可视化：</strong> 用户可以直接将序列粘贴到输入框中，进行即时可视化。</li>
-          <li><strong className="text-blue-700">自动折叠输入选项：</strong> 在执行 "加载示例"、 "上传FASTA" 或 "可视化粘贴序列" 后，输入选项将自动折叠。</li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-2xl font-semibold mb-4 text-blue-500">3. 序列导航</h3>
-        <ul className="list-disc pl-6 space-y-2">
-          <li><strong className="text-blue-700">跳转到指定位置：</strong> 用户可以使用专门的输入框跳转到序列中的指定位置。</li>
-          <li><strong className="text-blue-700">快捷键 Enter：</strong> 按下 "Enter" 键可以触发 "搜索序列" 和 "跳转到位置" 操作。</li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-2xl font-semibold mb-4 text-blue-500">4. 列管理</h3>
-        <ul className="list-disc pl-6 space-y-2">
-          <li><strong className="text-blue-700">删除选中列：</strong> 用户可以通过选择特定列，使用新功能来删除这些列。</li>
-          <li><strong className="text-blue-700">移除第一到最后可见列：</strong> "从第一个可见列到最后列的删除功能" 已根据用户反馈删除。</li>
-          <li><strong className="text-blue-700">Shift 范围选择：</strong> 按住 "Shift" 键，用户可以一次选择多个列。</li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-2xl font-semibold mb-4 text-blue-500">5. 键盘快捷键</h3>
-        <ul className="list-disc pl-6 space-y-2">
-          <li><strong className="text-blue-700">撤销 (Ctrl + Z)：</strong> 用户可以按 "Ctrl + Z" 撤销上一步操作。</li>
-          <li><strong className="text-blue-700">Enter 快捷键：</strong> 按下 "Enter" 键可触发搜索或跳转操作。</li>
-          <li><strong className="text-blue-700">粘贴 (Ctrl + V)：</strong> 按 "Ctrl + V" 将直接将序列粘贴到输入框中。</li>
-          <li><strong className="text-blue-700">删除列快捷键：</strong> 为快速删除选中列，已添加了 "Delete" 键快捷方式。</li>
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-2xl font-semibold mb-4 text-blue-500">6. 导出功能</h3>
-        <ul className="list-disc pl-6 space-y-2">
-          <li><strong className="text-blue-700">导出为FASTA：</strong> 用户可以将当前的可视化结果或分析结果导出为FASTA文件并下载。</li>
-        </ul>
-      </section>
-
-    </div>
-  );
-};
-
+    return (
+      <div className="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-2xl">
+        <h2 className="text-4xl font-bold mb-8 text-indigo-600 border-b-2 border-indigo-200 pb-4">my-fasta-viewer 使用指南</h2>
+  
+        <section className="mb-10">
+          <h3 className="text-2xl font-semibold mb-6 text-indigo-500">1. 开始使用</h3>
+          <p className="mb-4 text-gray-700 leading-relaxed">欢迎使用my-fasta-viewer！这是一个强大的FASTA序列可视化和编辑工具。以下是快速入门步骤：</p>
+          <ol className="list-decimal pl-8 space-y-3 text-gray-700">
+            <li>在主界面上方，你可以选择输入FASTA序列的方式：粘贴、上传文件或加载示例。</li>
+            <li>选择输入方式后，你的序列将在下方的可视化区域显示。</li>
+            <li>使用页面上的各种工具来编辑、分析和导出你的序列。</li>
+          </ol>
+        </section>
+  
+        <section className="mb-10">
+          <h3 className="text-2xl font-semibold mb-6 text-indigo-500">2. 主要功能</h3>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ["序列可视化", "直观地查看和编辑你的FASTA序列"],
+              ["序列搜索", "使用搜索框查找特定的序列片段"],
+              ["位置跳转", "快速跳转到序列的指定位置"],
+              ["列管理", "选择、删除和操作序列中的特定列"],
+              ["导出功能", "将编辑后的序列导出为FASTA文件"]
+            ].map(([title, desc], index) => (
+              <li key={index} className="bg-indigo-50 p-4 rounded-lg">
+                <strong className="text-indigo-700 block mb-2">{title}</strong>
+                <span className="text-gray-600">{desc}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+  
+        <section className="mb-10">
+          <h3 className="text-2xl font-semibold mb-6 text-indigo-500">3. 使用技巧</h3>
+          <ul className="space-y-3 text-gray-700">
+            {[
+              ["快捷键", "使用键盘快捷键提高操作效率（详见下方快捷键列表）"],
+              ["列选择", "按住Shift键可以一次选择多个列"],
+              ["自动折叠", "输入选项在执行后会自动折叠，保持界面整洁"]
+            ].map(([title, desc], index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-indigo-500 mr-2">•</span>
+                <span><strong className="text-indigo-700">{title}：</strong> {desc}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+  
+        <section className="mb-10">
+          <h3 className="text-2xl font-semibold mb-6 text-indigo-500">4. 键盘快捷键</h3>
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                ["Ctrl + Z", "撤销上一步操作"],
+                ["Enter", "触发搜索或跳转操作"],
+                ["Ctrl + V", "直接粘贴序列到输入框"],
+                ["Delete", "删除选中的列"]
+              ].map(([key, action], index) => (
+                <li key={index} className="flex items-center">
+                  <kbd className="bg-gray-200 text-gray-700 px-2 py-1 rounded mr-3 text-sm">{key}</kbd>
+                  <span className="text-gray-600">{action}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+  
+        <section className="mb-10">
+          <h3 className="text-2xl font-semibold mb-6 text-indigo-500">5. 注意事项</h3>
+          <ul className="space-y-3 text-gray-700">
+            {[
+              "确保你的FASTA序列格式正确，以便正确显示和分析。",
+              "大型序列可能需要较长时间加载，请耐心等待。",
+              "定期保存你的工作，以防意外丢失数据。"
+            ].map((item, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-indigo-500 mr-2">•</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+  
+        <p className="mt-8 text-gray-600 bg-indigo-50 p-4 rounded-lg">
+          如果你在使用过程中遇到任何问题或有改进建议，请随时联系我（xuzhougeng@163.com），祝你使用愉快！
+        </p>
+      </div>
+    );
+  };
 export default Help;
