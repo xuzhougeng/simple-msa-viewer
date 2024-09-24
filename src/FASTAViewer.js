@@ -86,6 +86,34 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             setHistory(prev => prev.slice(0, -1));
         }
     };
+    const deleteSelectedColumns = useCallback(() => {
+        if (highlightedColumns.length === 0) {
+            alert('No columns selected. Please highlight columns to delete.');
+            return;
+        }
+
+        setSequences(prevSequences => {
+            const newSequences = prevSequences.map(seq => {
+                let newSequence = '';
+                for (let i = 0; i < seq.sequence.length; i++) {
+                    if (!highlightedColumns.includes(i)) {
+                        newSequence += seq.sequence[i];
+                    }
+                }
+                return { ...seq, sequence: newSequence };
+            });
+
+            addToHistory({
+                type: 'deleteColumns',
+                columns: highlightedColumns,
+                prevSequences: prevSequences
+            });
+
+            return newSequences;
+        });
+
+        setHighlightedColumns([]);
+    }, [highlightedColumns, addToHistory]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -126,34 +154,6 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setSearchResults([]);
     };
 
-    const deleteSelectedColumns = useCallback(() => {
-        if (highlightedColumns.length === 0) {
-            alert('No columns selected. Please highlight columns to delete.');
-            return;
-        }
-
-        setSequences(prevSequences => {
-            const newSequences = prevSequences.map(seq => {
-                let newSequence = '';
-                for (let i = 0; i < seq.sequence.length; i++) {
-                    if (!highlightedColumns.includes(i)) {
-                        newSequence += seq.sequence[i];
-                    }
-                }
-                return { ...seq, sequence: newSequence };
-            });
-
-            addToHistory({
-                type: 'deleteColumns',
-                columns: highlightedColumns,
-                prevSequences: prevSequences
-            });
-
-            return newSequences;
-        });
-
-        setHighlightedColumns([]);
-    }, [highlightedColumns, addToHistory]);
 
     const parseFasta = (fastaContent) => {
         const lines = fastaContent.split('\n');
