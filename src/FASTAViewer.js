@@ -315,6 +315,13 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                     >
                                         <td className="border px-2 py-1">
                                             <div className="flex space-x-1">
+                                            <button 
+                                                    onClick={() => moveRowToFirst(rowIndex)} 
+                                                    className="text-green-500 hover:bg-green-100 p-1 rounded"
+                                                    title="Move row to first"
+                                                >
+                                                    <ChevronsUp size={16} />
+                                                </button>
                                                 <button 
                                                     onClick={() => moveRowUp(rowIndex)} 
                                                     className="text-blue-500 hover:bg-blue-100 p-1 rounded"
@@ -331,13 +338,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                                 >
                                                     <ArrowDown size={16} />
                                                 </button>
-                                                <button 
-                                                    onClick={() => deleteRow(rowIndex)} 
-                                                    className="text-red-500 hover:bg-red-100 p-1 rounded"
-                                                    title="Delete row"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
+
                                                 <button 
                                                     onClick={() => removeRowToLast(rowIndex)} 
                                                     className="text-yellow-500 hover:bg-yellow-100 p-1 rounded"
@@ -346,11 +347,11 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                                     <ChevronsDown size={16} />
                                                 </button>
                                                 <button 
-                                                    onClick={() => moveRowToFirst(rowIndex)} 
-                                                    className="text-green-500 hover:bg-green-100 p-1 rounded"
-                                                    title="Move row to first"
+                                                    onClick={() => deleteRow(rowIndex)} 
+                                                    className="text-red-500 hover:bg-red-100 p-1 rounded"
+                                                    title="Delete row"
                                                 >
-                                                    <ChevronsUp size={16} />
+                                                    <Trash2 size={16} />
                                                 </button>
                                             </div>
                                         </td>
