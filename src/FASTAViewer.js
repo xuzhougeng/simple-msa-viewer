@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight, Eraser } from 'lucide-react';
 
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
@@ -120,6 +120,31 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
     const clearHighlights = () => {
         setHighlightedColumns([]);
         setSearchResults([]);
+    };
+
+    const deleteSelectedColumns = () => {
+        if (highlightedColumns.length === 0) {
+            alert('No columns selected. Please highlight columns to delete.');
+            return;
+        }
+
+        const newSequences = sequences.map(seq => {
+            let newSequence = '';
+            for (let i = 0; i < seq.sequence.length; i++) {
+                if (!highlightedColumns.includes(i)) {
+                    newSequence += seq.sequence[i];
+                }
+            }
+            return { ...seq, sequence: newSequence };
+        });
+
+        setSequences(newSequences);
+        setHighlightedColumns([]);
+        addToHistory({
+            type: 'deleteColumns',
+            columns: highlightedColumns,
+            prevSequences: sequences
+        });
     };
 
     const parseFasta = (fastaContent) => {
@@ -359,6 +384,10 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                 <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                     <XCircle size={20} className="inline mr-2" />
                     Clear Highlights
+                </button>
+                <button onClick={deleteSelectedColumns} className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    <Eraser size={20} className="inline mr-2" />
+                    Delete Selected Columns
                 </button>
                 <div className="flex items-center space-x-2">
                     <input
