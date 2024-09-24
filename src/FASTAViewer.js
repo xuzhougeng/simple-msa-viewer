@@ -234,11 +234,11 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
     return (
         <div className="p-4">
             <h2 className="text-2xl font-bold mb-4">FASTA Sequence Viewer and Editor</h2>
-            <div className="mb-4 flex items-center space-x-2">
-                <button onClick={loadDemo} className="bg-blue-500 text-white p-2 rounded">
-                    Load Demo
+            <div className="mb-6 flex flex-wrap items-center gap-4">
+                <button onClick={loadDemo} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    <span className="mr-2">📊</span>Load Demo
                 </button>
-                <label className="bg-green-500 text-white p-2 rounded cursor-pointer">
+                <label className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:scale-105">
                     <input
                         type="file"
                         onChange={handleFileUpload}
@@ -249,42 +249,49 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     <Upload size={20} className="inline mr-2" />
                     Upload FASTA
                 </label>
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search sequence"
-                    className="border p-2"
-                />
-                <button onClick={handleSearch} className="bg-blue-500 text-white p-2 rounded">
-                    <Search size={20} />
-                </button>
-                <button onClick={clearHighlights} className="bg-red-500 text-white p-2 rounded">
-                    <XCircle size={20} />
+                <div className="flex-grow max-w-md">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Search sequence"
+                            className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button onClick={handleSearch} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600">
+                            <Search size={20} />
+                        </button>
+                    </div>
+                </div>
+                <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    <XCircle size={20} className="inline mr-2" />
                     Clear Highlights
                 </button>
             </div>
             {sequences.length > 0 ? (
                 <>
-                    <div className="mb-4 flex justify-between items-center">
-                        <button onClick={() => removeColumnToLast(currentPage * sequenceWidth)} className="bg-yellow-500 text-white p-2 rounded">
+                    <div className="mb-6 flex justify-between items-center">
+                        <button 
+                            onClick={() => removeColumnToLast(currentPage * sequenceWidth)} 
+                            className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                        >
                             Remove First Visible Column to Last
                         </button>
-                        <div className="flex items-center">
+                        <div className="flex items-center bg-gray-100 rounded-lg shadow-inner p-1">
                             <button
                                 onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
                                 disabled={currentPage === 0}
-                                className="p-2 bg-gray-200 rounded-l"
+                                className="p-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <ChevronLeft size={20} />
+                                <ChevronLeft size={24} />
                             </button>
-                            <span className="px-4">Page {currentPage + 1} of {getPageCount()}</span>
+                            <span className="px-4 font-medium">Page {currentPage + 1} of {getPageCount()}</span>
                             <button
                                 onClick={() => setCurrentPage(prev => Math.min(getPageCount() - 1, prev + 1))}
                                 disabled={currentPage === getPageCount() - 1}
-                                className="p-2 bg-gray-200 rounded-r"
+                                className="p-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <ChevronRight size={20} />
+                                <ChevronRight size={24} />
                             </button>
                         </div>
                     </div>
