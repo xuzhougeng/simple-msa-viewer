@@ -11,6 +11,7 @@ const FASTAViewer = () => {
     const [pastedSequence, setPastedSequence] = useState('');
     const [isInputExpanded, setIsInputExpanded] = useState(true);
     const [jumpPosition, setJumpPosition] = useState('');
+    const [selectionStart, setSelectionStart] = useState(null);
     const sequenceWidth = 60;
     const fileInputRef = useRef(null);
 
@@ -136,9 +137,20 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('paste', handlePaste);
 
+        const handleKeyUp = (event) => {
+            if (event.key === 'Shift') {
+                setSelectionStart(null);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('paste', handlePaste);
+        window.addEventListener('keyup', handleKeyUp);
+
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('paste', handlePaste);
+            window.removeEventListener('keyup', handleKeyUp);
         };
     }, [history, deleteSelectedColumns, undo]);
 
@@ -211,12 +223,31 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setSequences(newSequences);
     };
 
-    const toggleHighlight = (columnIndex) => {
-        setHighlightedColumns(prev =>
-            prev.includes(columnIndex)
-                ? prev.filter(col => col !== columnIndex)
-                : [...prev, columnIndex]
-        );
+    const toggleHighlight = (columnIndex, isShiftKey = false) => {
+        setHighlightedColumns(prev => {
+            if (isShiftKey && selectionStart !== null) {
+                const start = Math.min(selectionStart, columnIndex);
+                const end = Math.max(selectionStart, columnIndex);
+                const newSelection = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+                return [...new Set([...prev, ...newSelection])];
+            } else {
+                return prev.includes(columnIndex)
+                    ? prev.filter(col => col !== columnIndex)
+                    : [...prev, columnIndex];
+            }
+        });
+    };
+
+    const handleColumnClick = (columnIndex, isShiftKey) => {
+        if (isShiftKey) {
+            if (selectionStart === null) {
+                setSelectionStart(columnIndex);
+            }
+            toggleHighlight(columnIndex, true);
+        } else {
+            setSelectionStart(columnIndex);
+            toggleHighlight(columnIndex);
+        }
     };
 
     const handleSearch = () => {
@@ -313,7 +344,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     className={`border px-1 py-1 font-mono
                     ${highlightedColumns.includes(absoluteIndex) ? 'bg-yellow-200' : ''}
                     ${isHighlighted ? 'bg-green-300' : ''}`}
-                    onClick={() => toggleHighlight(absoluteIndex)}
+                    onClick={(e) => handleColumnClick(absoluteIndex, e.shiftKey)}
                     title={char !== '-' ? `Actual position: ${actualPosition}` : 'Gap'}
                 >
                     {char}
