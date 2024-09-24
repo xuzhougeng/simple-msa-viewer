@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight, Eraser } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight, Eraser, Download } from 'lucide-react';
 
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
@@ -279,6 +279,23 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setSearchResults(results);
     };
 
+    const generateFastaContent = () => {
+        return sequences.map(seq => `>${seq.id}\n${seq.sequence}`).join('\n');
+    };
+
+    const downloadFasta = () => {
+        const content = generateFastaContent();
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'sequences.fasta';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     const moveRowUp = (index) => {
         if (index > 0) {
             setSequences(prev => {
@@ -449,6 +466,14 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                         Jump
                     </button>
                 </div>
+                <button
+                    onClick={downloadFasta}
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    disabled={sequences.length === 0}
+                >
+                    <Download size={20} className="inline mr-2" />
+                    Export FASTA
+                </button>
             </div>
             {sequences.length > 0 ? (
                 <>
