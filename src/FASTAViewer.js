@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard } from 'lucide-react';
 
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
@@ -7,6 +7,7 @@ const FASTAViewer = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
+    const [pastedSequence, setPastedSequence] = useState('');
     const sequenceWidth = 60;
     const fileInputRef = useRef(null);
 
@@ -60,6 +61,13 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setSearchResults([]);
         setSearchTerm('');
         setHighlightedColumns([]);
+        setPastedSequence('');
+    };
+
+    const handlePasteSubmit = () => {
+        const parsedSequences = parseFasta(pastedSequence);
+        setSequences(parsedSequences);
+        resetState();
     };
 
     const clearHighlights = () => {
@@ -266,6 +274,21 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                 <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                     <XCircle size={20} className="inline mr-2" />
                     Clear Highlights
+                </button>
+            </div>
+            <div className="mb-6">
+                <textarea
+                    value={pastedSequence}
+                    onChange={(e) => setPastedSequence(e.target.value)}
+                    placeholder="Paste your FASTA sequence here..."
+                    className="w-full h-32 p-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button 
+                    onClick={handlePasteSubmit}
+                    className="mt-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                >
+                    <Clipboard size={20} className="inline mr-2" />
+                    Visualize Pasted Sequence
                 </button>
             </div>
             {sequences.length > 0 ? (
