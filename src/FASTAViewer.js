@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight, Eraser } from 'lucide-react';
 
 const FASTAViewer = () => {
@@ -93,6 +93,10 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                 event.preventDefault();
                 undo();
             }
+            if (event.key === 'Delete') {
+                event.preventDefault();
+                deleteSelectedColumns();
+            }
         };
 
         const handlePaste = (event) => {
@@ -108,7 +112,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('paste', handlePaste);
         };
-    }, [history]);
+    }, [history, deleteSelectedColumns, undo]);
 
     const handlePasteSubmit = () => {
         const parsedSequences = parseFasta(pastedSequence);
@@ -122,30 +126,34 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setSearchResults([]);
     };
 
-    const deleteSelectedColumns = () => {
+    const deleteSelectedColumns = useCallback(() => {
         if (highlightedColumns.length === 0) {
             alert('No columns selected. Please highlight columns to delete.');
             return;
         }
 
-        const newSequences = sequences.map(seq => {
-            let newSequence = '';
-            for (let i = 0; i < seq.sequence.length; i++) {
-                if (!highlightedColumns.includes(i)) {
-                    newSequence += seq.sequence[i];
+        setSequences(prevSequences => {
+            const newSequences = prevSequences.map(seq => {
+                let newSequence = '';
+                for (let i = 0; i < seq.sequence.length; i++) {
+                    if (!highlightedColumns.includes(i)) {
+                        newSequence += seq.sequence[i];
+                    }
                 }
-            }
-            return { ...seq, sequence: newSequence };
+                return { ...seq, sequence: newSequence };
+            });
+
+            addToHistory({
+                type: 'deleteColumns',
+                columns: highlightedColumns,
+                prevSequences: prevSequences
+            });
+
+            return newSequences;
         });
 
-        setSequences(newSequences);
         setHighlightedColumns([]);
-        addToHistory({
-            type: 'deleteColumns',
-            columns: highlightedColumns,
-            prevSequences: sequences
-        });
-    };
+    }, [highlightedColumns, addToHistory]);
 
     const parseFasta = (fastaContent) => {
         const lines = fastaContent.split('\n');
