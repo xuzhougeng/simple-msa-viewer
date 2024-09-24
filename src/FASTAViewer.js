@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp } from 'lucide-react';
 
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
@@ -177,6 +177,15 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         });
     };
 
+    const moveRowToFirst = (index) => {
+        setSequences(prev => {
+            const newSequences = [...prev];
+            const [removed] = newSequences.splice(index, 1);
+            newSequences.unshift(removed);
+            return newSequences;
+        });
+    };
+
     const removeColumnToLast = (columnIndex) => {
         setSequences(prev => prev.map(seq => {
             const chars = seq.sequence.split('');
@@ -335,6 +344,13 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                                     title="Move row to last"
                                                 >
                                                     <ChevronsDown size={16} />
+                                                </button>
+                                                <button 
+                                                    onClick={() => moveRowToFirst(rowIndex)} 
+                                                    className="text-green-500 hover:bg-green-100 p-1 rounded"
+                                                    title="Move row to first"
+                                                >
+                                                    <ChevronsUp size={16} />
                                                 </button>
                                             </div>
                                         </td>
