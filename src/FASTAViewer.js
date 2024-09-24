@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 
 const FASTAViewer = () => {
@@ -8,11 +8,10 @@ const FASTAViewer = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [pastedSequence, setPastedSequence] = useState('');
-    const [isInputExpanded, setIsInputExpanded] = useState(true);
+    const [isInputExpanded, setIsInputExpanded] = useState(false);
     const [jumpPosition, setJumpPosition] = useState('');
     const sequenceWidth = 60;
     const fileInputRef = useRef(null);
-    const [history, setHistory] = useState([]);
 
     const demoData = `
 AT2G43570 --------------------------------------------------------------------------------
@@ -65,94 +64,12 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setSearchTerm('');
         setHighlightedColumns([]);
         setPastedSequence('');
-        setIsInputExpanded(false);
     };
 
     const handlePasteSubmit = () => {
         const parsedSequences = parseFasta(pastedSequence);
         setSequences(parsedSequences);
         resetState();
-        addToHistory({ type: 'paste', data: parsedSequences });
-    };
-
-    const addToHistory = (action) => {
-        setHistory(prev => [...prev, action]);
-    };
-
-    const undo = () => {
-        if (history.length > 0) {
-            const lastAction = history[history.length - 1];
-            // Implement undo logic based on the action type
-            // For example:
-            if (lastAction.type === 'paste') {
-                setSequences([]);
-            }
-            // Add more undo logic for other action types
-
-            setHistory(prev => prev.slice(0, -1));
-        }
-    };
-
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.ctrlKey && e.key === 'z') {
-                e.preventDefault();
-                undo();
-            }
-            if (e.ctrlKey && e.key === 'v') {
-                e.preventDefault();
-                navigator.clipboard.readText().then(text => {
-                    setPastedSequence(text);
-                });
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [history]);
-
-    const handleSearch = (e) => {
-        if (e.key === 'Enter' || e.type === 'click') {
-            const results = sequences.map(seq => {
-                const matches = [];
-                let sequenceIndex = 0;
-                let searchIndex = 0;
-                let matchStart = -1;
-
-                while (sequenceIndex < seq.sequence.length) {
-                    if (seq.sequence[sequenceIndex] === searchTerm[searchIndex] || seq.sequence[sequenceIndex] === '-') {
-                        if (matchStart === -1) matchStart = sequenceIndex;
-                        if (seq.sequence[sequenceIndex] !== '-') searchIndex++;
-                        if (searchIndex === searchTerm.length) {
-                            matches.push([matchStart, sequenceIndex + 1]);
-                            searchIndex = 0;
-                            matchStart = -1;
-                        }
-                    } else {
-                        searchIndex = 0;
-                        matchStart = -1;
-                    }
-                    sequenceIndex++;
-                }
-
-                return { id: seq.id, matches };
-            }).filter(result => result.matches.length > 0);
-
-            setSearchResults(results);
-        }
-    };
-
-    const handleJumpToPosition = (e) => {
-        if (e.key === 'Enter' || e.type === 'click') {
-            const position = parseInt(jumpPosition, 10);
-            if (isNaN(position) || position < 1 || position > sequences[0]?.sequence.length) {
-                alert('Invalid position. Please enter a number within the sequence range.');
-                return;
-            }
-            const newPage = Math.floor((position - 1) / sequenceWidth);
-            setCurrentPage(newPage);
-            setJumpPosition('');
-        }
     };
 
     const clearHighlights = () => {
