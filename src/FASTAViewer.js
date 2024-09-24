@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp } from 'lucide-react';
 
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
@@ -8,6 +8,7 @@ const FASTAViewer = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [pastedSequence, setPastedSequence] = useState('');
+    const [isInputExpanded, setIsInputExpanded] = useState(false);
     const sequenceWidth = 60;
     const fileInputRef = useRef(null);
 
@@ -242,55 +243,68 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
     return (
         <div className="p-4">
             <h2 className="text-2xl font-bold mb-4">FASTA Sequence Viewer and Editor</h2>
-            <div className="mb-6 flex flex-wrap items-center gap-4">
-                <button onClick={loadDemo} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-                    <span className="mr-2">📊</span>Load Demo
+            <div className="mb-4">
+                <button
+                    onClick={() => setIsInputExpanded(!isInputExpanded)}
+                    className="w-full bg-gray-200 hover:bg-gray-300 py-2 px-4 rounded-lg flex justify-between items-center"
+                >
+                    <span className="font-semibold">Input Options</span>
+                    {isInputExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </button>
-                <label className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:scale-105">
-                    <input
-                        type="file"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                        accept=".fasta,.fa,.txt"
-                        ref={fileInputRef}
-                    />
-                    <Upload size={20} className="inline mr-2" />
-                    Upload FASTA
-                </label>
-                <div className="flex-grow max-w-md">
-                    <div className="relative">
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search sequence"
-                            className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            </div>
+            {isInputExpanded && (
+                <div className="mb-6 space-y-4">
+                    <div className="flex flex-wrap items-center gap-4">
+                        <button onClick={loadDemo} className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                            <span className="mr-2">📊</span>Load Demo
+                        </button>
+                        <label className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md cursor-pointer transition duration-300 ease-in-out transform hover:scale-105">
+                            <input
+                                type="file"
+                                onChange={handleFileUpload}
+                                className="hidden"
+                                accept=".fasta,.fa,.txt"
+                                ref={fileInputRef}
+                            />
+                            <Upload size={20} className="inline mr-2" />
+                            Upload FASTA
+                        </label>
+                        <div className="flex-grow max-w-md">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    placeholder="Search sequence"
+                                    className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                                <button onClick={handleSearch} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600">
+                                    <Search size={20} />
+                                </button>
+                            </div>
+                        </div>
+                        <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                            <XCircle size={20} className="inline mr-2" />
+                            Clear Highlights
+                        </button>
+                    </div>
+                    <div>
+                        <textarea
+                            value={pastedSequence}
+                            onChange={(e) => setPastedSequence(e.target.value)}
+                            placeholder="Paste your FASTA sequence here..."
+                            className="w-full h-32 p-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <button onClick={handleSearch} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600">
-                            <Search size={20} />
+                        <button 
+                            onClick={handlePasteSubmit}
+                            className="mt-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                        >
+                            <Clipboard size={20} className="inline mr-2" />
+                            Visualize Pasted Sequence
                         </button>
                     </div>
                 </div>
-                <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-                    <XCircle size={20} className="inline mr-2" />
-                    Clear Highlights
-                </button>
-            </div>
-            <div className="mb-6">
-                <textarea
-                    value={pastedSequence}
-                    onChange={(e) => setPastedSequence(e.target.value)}
-                    placeholder="Paste your FASTA sequence here..."
-                    className="w-full h-32 p-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button 
-                    onClick={handlePasteSubmit}
-                    className="mt-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                >
-                    <Clipboard size={20} className="inline mr-2" />
-                    Visualize Pasted Sequence
-                </button>
-            </div>
+            )}
             {sequences.length > 0 ? (
                 <>
                     <div className="mb-6 flex justify-between items-center">
