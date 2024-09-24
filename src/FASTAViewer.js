@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
@@ -9,6 +9,7 @@ const FASTAViewer = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [pastedSequence, setPastedSequence] = useState('');
     const [isInputExpanded, setIsInputExpanded] = useState(false);
+    const [jumpPosition, setJumpPosition] = useState('');
     const sequenceWidth = 60;
     const fileInputRef = useRef(null);
 
@@ -103,6 +104,17 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
     };
 
     const getPageCount = () => Math.ceil(sequences[0]?.sequence.length / sequenceWidth) || 1;
+
+    const handleJumpToPosition = () => {
+        const position = parseInt(jumpPosition, 10);
+        if (isNaN(position) || position < 1 || position > sequences[0]?.sequence.length) {
+            alert('Invalid position. Please enter a number within the sequence range.');
+            return;
+        }
+        const newPage = Math.floor((position - 1) / sequenceWidth);
+        setCurrentPage(newPage);
+        setJumpPosition('');
+    };
 
     const handleDragStart = (e, index) => {
         e.dataTransfer.setData('text/plain', index);
@@ -287,6 +299,22 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                             <XCircle size={20} className="inline mr-2" />
                             Clear Highlights
                         </button>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="number"
+                                value={jumpPosition}
+                                onChange={(e) => setJumpPosition(e.target.value)}
+                                placeholder="Jump to position"
+                                className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                                onClick={handleJumpToPosition}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                            >
+                                <ArrowRight size={20} className="inline mr-2" />
+                                Jump
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <textarea
