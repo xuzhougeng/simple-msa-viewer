@@ -93,6 +93,10 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                 event.preventDefault();
                 undo();
             }
+            if (event.key === 'Delete') {
+                event.preventDefault();
+                deleteSelectedColumns();
+            }
         };
 
         const handlePaste = (event) => {
@@ -108,7 +112,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('paste', handlePaste);
         };
-    }, [history]);
+    }, [history, deleteSelectedColumns]);
 
     const handlePasteSubmit = () => {
         const parsedSequences = parseFasta(pastedSequence);
