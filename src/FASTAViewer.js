@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 
 const FASTAViewer = () => {
@@ -8,10 +8,46 @@ const FASTAViewer = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [pastedSequence, setPastedSequence] = useState('');
-    const [isInputExpanded, setIsInputExpanded] = useState(false);
+    const [isInputExpanded, setIsInputExpanded] = useState(true);
     const [jumpPosition, setJumpPosition] = useState('');
+    const [history, setHistory] = useState([]);
     const sequenceWidth = 60;
     const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.ctrlKey && e.key === 'z') {
+                e.preventDefault();
+                undo();
+            }
+        };
+        const handlePaste = (e) => {
+            if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT') {
+                e.preventDefault();
+                const pastedText = e.clipboardData.getData('text');
+                setPastedSequence(pastedText);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('paste', handlePaste);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('paste', handlePaste);
+        };
+    }, []);
+
+    const undo = () => {
+        if (history.length > 0) {
+            const previousState = history[history.length - 1];
+            setSequences(previousState);
+            setHistory(prevHistory => prevHistory.slice(0, -1));
+        }
+    };
+
+    const updateSequencesWithHistory = (newSequences) => {
+        setHistory(prevHistory => [...prevHistory, sequences]);
+        setSequences(newSequences);
+    };
 
     const demoData = `
 AT2G43570 --------------------------------------------------------------------------------
@@ -39,6 +75,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         });
         setSequences(parsedSequences);
         resetState();
+        setIsInputExpanded(false);
     };
 
     const handleFileUpload = (event) => {
@@ -50,6 +87,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                 const parsedSequences = parseFasta(content);
                 setSequences(parsedSequences);
                 resetState();
+                setIsInputExpanded(false);
             };
             reader.readAsText(file);
         }
@@ -70,6 +108,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         const parsedSequences = parseFasta(pastedSequence);
         setSequences(parsedSequences);
         resetState();
+        setIsInputExpanded(false);
     };
 
     const clearHighlights = () => {
@@ -212,14 +251,6 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         });
     };
 
-    const removeColumnToLast = (columnIndex) => {
-        setSequences(prev => prev.map(seq => {
-            const chars = seq.sequence.split('');
-            const [removed] = chars.splice(columnIndex, 1);
-            chars.push(removed);
-            return { ...seq, sequence: chars.join('') };
-        }));
-    };
 
     const calculateActualPosition = (sequence, index) => {
         return sequence.slice(0, index).replace(/-/g, '').length + 1;
@@ -287,6 +318,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                     type="text"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                                     placeholder="Search sequence"
                                     className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -295,6 +327,8 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                 </button>
                             </div>
                         </div>
+                    </div>
+                    <div className="flex items-center space-x-4 mt-4">
                         <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                             <XCircle size={20} className="inline mr-2" />
                             Clear Highlights
@@ -304,6 +338,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                 type="number"
                                 value={jumpPosition}
                                 onChange={(e) => setJumpPosition(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleJumpToPosition()}
                                 placeholder="Jump to position"
                                 className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
@@ -315,6 +350,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                 Jump
                             </button>
                         </div>
+                    </div>
                     </div>
                     <div>
                         <textarea
@@ -335,13 +371,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             )}
             {sequences.length > 0 ? (
                 <>
-                    <div className="mb-6 flex justify-between items-center">
-                        <button 
-                            onClick={() => removeColumnToLast(currentPage * sequenceWidth)} 
-                            className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                        >
-                            Remove First Visible Column to Last
-                        </button>
+                    <div className="mb-6 flex justify-center items-center">
                         <div className="flex items-center bg-gray-100 rounded-lg shadow-inner p-1">
                             <button
                                 onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
