@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
+    const [history, setHistory] = useState([]);
     const [highlightedColumns, setHighlightedColumns] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -67,6 +68,47 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setHighlightedColumns([]);
         setPastedSequence('');
     };
+
+    const addToHistory = (action) => {
+        setHistory(prev => [...prev, action]);
+    };
+
+    const undo = () => {
+        if (history.length > 0) {
+            const lastAction = history[history.length - 1];
+            // Implement the reverse of the last action
+            // This is a simplified example, you'll need to implement the actual undo logic
+            if (lastAction.type === 'setSequences') {
+                setSequences(lastAction.prevValue);
+            }
+            // Add more action types as needed
+
+            setHistory(prev => prev.slice(0, -1));
+        }
+    };
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.ctrlKey && event.key === 'z') {
+                event.preventDefault();
+                undo();
+            }
+        };
+
+        const handlePaste = (event) => {
+            const pastedText = event.clipboardData.getData('text');
+            setPastedSequence(prev => prev + pastedText);
+            event.preventDefault();
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('paste', handlePaste);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('paste', handlePaste);
+        };
+    }, [history]);
 
     const handlePasteSubmit = () => {
         const parsedSequences = parseFasta(pastedSequence);
@@ -282,6 +324,11 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                     type="text"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyPress={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleSearch();
+                                        }
+                                    }}
                                     placeholder="Search sequence"
                                     className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -318,6 +365,11 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                         type="number"
                         value={jumpPosition}
                         onChange={(e) => setJumpPosition(e.target.value)}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                handleJumpToPosition();
+                            }
+                        }}
                         placeholder="Jump to position"
                         className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
