@@ -280,6 +280,13 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         }).filter(result => result.matches.length > 0);
 
         setSearchResults(results);
+
+        // If there are search results, jump to the page containing the first match
+        if (results.length > 0 && results[0].matches.length > 0) {
+            const firstMatchStart = results[0].matches[0][0];
+            const newPage = Math.floor(firstMatchStart / sequenceWidth);
+            setCurrentPage(newPage);
+        }
     };
 
     const generateFastaContent = () => {
