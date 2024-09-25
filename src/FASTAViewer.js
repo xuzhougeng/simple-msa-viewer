@@ -12,7 +12,7 @@ const FASTAViewer = () => {
     const [isInputExpanded, setIsInputExpanded] = useState(true);
     const [jumpPosition, setJumpPosition] = useState('');
     const [selectionStart, setSelectionStart] = useState(null);
-    const sequenceWidth = 60;
+    const [sequenceWidth, setSequenceWidth] = useState(60);
     const fileInputRef = useRef(null);
 
     const demoData = `
@@ -479,6 +479,23 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     <Download size={20} className="inline mr-2" />
                     Export FASTA
                 </button>
+                <div className="flex items-center space-x-2">
+                    <label htmlFor="sequenceWidth" className="font-medium">Sequence Width:</label>
+                    <input
+                        id="sequenceWidth"
+                        type="number"
+                        value={sequenceWidth}
+                        onChange={(e) => {
+                            const newWidth = parseInt(e.target.value, 10);
+                            if (newWidth > 0) {
+                                setSequenceWidth(newWidth);
+                                setCurrentPage(0); // Reset to first page when width changes
+                            }
+                        }}
+                        className="border border-gray-300 rounded-lg py-2 px-4 w-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        min="1"
+                    />
+                </div>
             </div>
             {sequences.length > 0 ? (
                 <>
