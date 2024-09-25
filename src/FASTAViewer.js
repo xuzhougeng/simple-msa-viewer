@@ -392,25 +392,83 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     {isInputExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </button>
             </div>
-            <div className="mb-4 flex flex-wrap items-center gap-4">
-                <div className="flex-grow max-w-md">
-                    <div className="relative">
+            <div className="mb-4 space-y-4">
+                <div className="flex flex-wrap items-center gap-4 justify-between">
+                    <div className="flex-grow max-w-md">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleSearch();
+                                    }
+                                }}
+                                placeholder="Search sequence"
+                                className="w-full border border-gray-300 rounded-lg py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button onClick={handleSearch} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600">
+                                <Search size={20} />
+                            </button>
+                        </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <label htmlFor="sequenceWidth" className="font-medium whitespace-nowrap">Sequence Width:</label>
                         <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                    handleSearch();
+                            id="sequenceWidth"
+                            type="number"
+                            value={sequenceWidth}
+                            onChange={(e) => {
+                                const newWidth = parseInt(e.target.value, 10);
+                                if (newWidth > 0) {
+                                    setSequenceWidth(newWidth);
+                                    setCurrentPage(0); // Reset to first page when width changes
                                 }
                             }}
-                            placeholder="Search sequence"
-                            className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="border border-gray-300 rounded-lg py-2 px-4 w-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            min="1"
                         />
-                        <button onClick={handleSearch} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600">
-                            <Search size={20} />
+                    </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 justify-center">
+                    <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        <XCircle size={20} className="inline mr-2" />
+                        Clear Highlights
+                    </button>
+                    <button onClick={deleteSelectedColumns} className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        <Eraser size={20} className="inline mr-2" />
+                        Delete Selected Columns
+                    </button>
+                    <div className="flex items-center space-x-2">
+                        <input
+                            type="number"
+                            value={jumpPosition}
+                            onChange={(e) => setJumpPosition(e.target.value)}
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleJumpToPosition();
+                                }
+                            }}
+                            placeholder="Jump to position"
+                            className="border border-gray-300 rounded-lg py-2 px-4 w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                            onClick={handleJumpToPosition}
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                        >
+                            <ArrowRight size={20} className="inline mr-2" />
+                            Jump
                         </button>
                     </div>
+                    <button
+                        onClick={downloadFasta}
+                        className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                        disabled={sequences.length === 0}
+                    >
+                        <Download size={20} className="inline mr-2" />
+                        Export FASTA
+                    </button>
                 </div>
             </div>
             {isInputExpanded && (
@@ -448,62 +506,6 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     </div>
                 </div>
             )}
-            <div className="mb-4 flex flex-wrap items-center gap-4 justify-center">
-                <button onClick={clearHighlights} className="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-                    <XCircle size={20} className="inline mr-2" />
-                    Clear Highlights
-                </button>
-                <button onClick={deleteSelectedColumns} className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-                    <Eraser size={20} className="inline mr-2" />
-                    Delete Selected Columns
-                </button>
-                <div className="flex items-center space-x-2">
-                    <input
-                        type="number"
-                        value={jumpPosition}
-                        onChange={(e) => setJumpPosition(e.target.value)}
-                        onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                                handleJumpToPosition();
-                            }
-                        }}
-                        placeholder="Jump to position"
-                        className="border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                        onClick={handleJumpToPosition}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                    >
-                        <ArrowRight size={20} className="inline mr-2" />
-                        Jump
-                    </button>
-                </div>
-                <button
-                    onClick={downloadFasta}
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                    disabled={sequences.length === 0}
-                >
-                    <Download size={20} className="inline mr-2" />
-                    Export FASTA
-                </button>
-                <div className="flex items-center space-x-2">
-                    <label htmlFor="sequenceWidth" className="font-medium">Sequence Width:</label>
-                    <input
-                        id="sequenceWidth"
-                        type="number"
-                        value={sequenceWidth}
-                        onChange={(e) => {
-                            const newWidth = parseInt(e.target.value, 10);
-                            if (newWidth > 0) {
-                                setSequenceWidth(newWidth);
-                                setCurrentPage(0); // Reset to first page when width changes
-                            }
-                        }}
-                        className="border border-gray-300 rounded-lg py-2 px-4 w-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        min="1"
-                    />
-                </div>
-            </div>
             {sequences.length > 0 ? (
                 <>
                 <div className="mb-6 flex justify-center items-center">
