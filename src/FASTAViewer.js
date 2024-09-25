@@ -129,13 +129,16 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         };
 
         const handlePaste = (event) => {
-            const pastedText = event.clipboardData.getData('text');
-            setPastedSequence(prev => prev + pastedText);
-            event.preventDefault();
+            if (!isInputExpanded && event.ctrlKey && event.key === 'v') {
+                event.preventDefault();
+                const pastedText = event.clipboardData.getData('text');
+                setSearchTerm(prev => prev + pastedText);
+            } else {
+                const pastedText = event.clipboardData.getData('text');
+                setPastedSequence(prev => prev + pastedText);
+                event.preventDefault();
+            }
         };
-
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('paste', handlePaste);
 
         const handleKeyUp = (event) => {
             if (event.key === 'Shift') {
@@ -152,7 +155,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             window.removeEventListener('paste', handlePaste);
             window.removeEventListener('keyup', handleKeyUp);
         };
-    }, [history, deleteSelectedColumns, undo]);
+    }, [history, deleteSelectedColumns, undo, isInputExpanded]);
 
     const handlePasteSubmit = () => {
         const parsedSequences = parseFasta(pastedSequence);
@@ -382,6 +385,27 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     {isInputExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </button>
             </div>
+            <div className="mb-4 flex flex-wrap items-center gap-4">
+                <div className="flex-grow max-w-md">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyPress={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleSearch();
+                                }
+                            }}
+                            placeholder="Search sequence"
+                            className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button onClick={handleSearch} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600">
+                            <Search size={20} />
+                        </button>
+                    </div>
+                </div>
+            </div>
             {isInputExpanded && (
                 <div className="mb-6 space-y-4">
                     <div className="flex flex-wrap items-center gap-4">
@@ -399,25 +423,6 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                             <Upload size={20} className="inline mr-2" />
                             Upload FASTA
                         </label>
-                        <div className="flex-grow max-w-md">
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    onKeyPress={(e) => {
-                                        if (e.key === 'Enter') {
-                                            handleSearch();
-                                        }
-                                    }}
-                                    placeholder="Search sequence"
-                                    className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                                <button onClick={handleSearch} className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600">
-                                    <Search size={20} />
-                                </button>
-                            </div>
-                        </div>
                     </div>
                     <div>
                         <textarea
