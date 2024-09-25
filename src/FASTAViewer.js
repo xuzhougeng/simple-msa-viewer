@@ -528,8 +528,8 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                         <table className="border-collapse">
                             <thead>
                                 <tr>
-                                    <th className="border px-2 py-1 font-mono bg-gray-200 sticky left-0 z-10">Actions</th>
-                                    <th className="border px-2 py-1 font-mono bg-gray-200 whitespace-nowrap sticky left-[100px] z-10" style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis' }}>ID</th>
+                                    <th className="border px-2 py-1 font-mono bg-gray-200 sticky left-0 z-10 min-w-[150px]">Actions</th>
+                                    <th className="border px-2 py-1 font-mono bg-gray-200 whitespace-nowrap sticky left-[150px] z-10 min-w-[200px]" style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis' }}>ID</th>
                                     {[...Array(sequenceWidth)].map((_, index) => (
                                         <th
                                             key={index}
@@ -564,8 +564,8 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                         onDrop={(e) => handleDrop(e, rowIndex)}
                                         className="hover:bg-gray-100"
                                     >
-                                        <td className="border px-2 py-1 sticky left-0 bg-white z-10">
-                                            <div className="flex space-x-1">
+                                        <td className="border px-2 py-1 sticky left-0 bg-white z-10 min-w-[150px]">
+                                            <div className="flex space-x-1 justify-between">
                                             <button 
                                                     onClick={() => moveRowToFirst(rowIndex)} 
                                                     className="text-green-500 hover:bg-green-100 p-1 rounded"
@@ -607,8 +607,8 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                                             </div>
                                         </td>
                                         <td
-                                            className="border px-2 py-1 font-mono whitespace-nowrap sticky left-[100px] bg-white z-10"
-                                            style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                            className="border px-2 py-1 font-mono whitespace-nowrap sticky left-[150px] bg-white z-10 min-w-[200px]"
+                                            style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis' }}
                                             title={seq.id}
                                         >
                                             {seq.id}
