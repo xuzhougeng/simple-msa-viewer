@@ -178,16 +178,22 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setHighlightedColumns([]);
         setSearchResults([]);
     };
+const parseFasta = (fastaContent) => {
+    const lines = fastaContent.split('\n');
+    const sequences = [];
+    let currentId = '';
+    let currentSequence = '';
 
+    const isNewFormat = !lines[0].startsWith('>');
 
-    const parseFasta = (fastaContent) => {
-        const lines = fastaContent.split('\n');
-        const sequences = [];
-        let currentId = '';
-        let currentSequence = '';
-
-        lines.forEach(line => {
-            line = line.trim();
+    lines.forEach(line => {
+        line = line.trim();
+        if (isNewFormat) {
+            const [id, sequence] = line.split(/\s+/);
+            if (id && sequence) {
+                sequences.push({ id, sequence });
+            }
+        } else {
             if (line.startsWith('>')) {
                 if (currentId) {
                     sequences.push({ id: currentId, sequence: currentSequence });
@@ -197,12 +203,15 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             } else if (line) {
                 currentSequence += line;
             }
-        });
-
-        if (currentId) {
-            sequences.push({ id: currentId, sequence: currentSequence });
         }
+    });
 
+    if (!isNewFormat && currentId) {
+        sequences.push({ id: currentId, sequence: currentSequence });
+    }
+
+    return sequences;
+};
         return sequences;
     };
 
