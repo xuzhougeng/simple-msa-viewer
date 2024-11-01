@@ -32,6 +32,7 @@ const FASTAViewer = () => {
     const [jumpPosition, setJumpPosition] = useState('');
     const [selectionStart, setSelectionStart] = useState(null);
     const [sequenceWidth, setSequenceWidth] = useState(60);
+    const [coloringEnabled, setColoringEnabled] = useState(true);
     const fileInputRef = useRef(null);
 
     const demoData = `
@@ -395,7 +396,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             const absoluteIndex = start + index;
             const isHighlighted = highlightRanges.some(([start, end]) => absoluteIndex >= start && absoluteIndex < end);
             const actualPosition = calculateActualPosition(sequence, absoluteIndex);
-            const backgroundColor = getColorForChar(char, isNucleotide);
+            const backgroundColor = coloringEnabled ? getColorForChar(char, isNucleotide) : '#ffffff';
             return (
                 <td
                     key={index}
@@ -498,21 +499,34 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             </div>
         </div>
         <div className="flex items-center space-x-2">
-            <label htmlFor="sequenceWidth" className="font-medium">Sequence Width:</label>
-            <input
-                id="sequenceWidth"
-                type="number"
-                value={sequenceWidth}
-                onChange={(e) => {
-                    const newWidth = parseInt(e.target.value, 10);
-                    if (newWidth > 0) {
-                        setSequenceWidth(newWidth);
-                        setCurrentPage(0); // Reset to first page when width changes
-                    }
-                }}
-                className="border border-gray-300 rounded-lg py-2 px-4 w-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                min="1"
-            />
+            <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        checked={coloringEnabled}
+                        onChange={(e) => setColoringEnabled(e.target.checked)}
+                        className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                    />
+                    <span className="font-medium">Enable Coloring</span>
+                </label>
+                <div className="flex items-center gap-2">
+                    <label htmlFor="sequenceWidth" className="font-medium">Sequence Width:</label>
+                    <input
+                        id="sequenceWidth"
+                        type="number"
+                        value={sequenceWidth}
+                        onChange={(e) => {
+                            const newWidth = parseInt(e.target.value, 10);
+                            if (newWidth > 0) {
+                                setSequenceWidth(newWidth);
+                                setCurrentPage(0); // Reset to first page when width changes
+                            }
+                        }}
+                        className="border border-gray-300 rounded-lg py-2 px-4 w-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        min="1"
+                    />
+                </div>
+            </div>
         </div>
     </div>
     <div className="mb-4 flex flex-wrap items-center gap-4 justify-between">
