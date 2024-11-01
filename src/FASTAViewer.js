@@ -186,21 +186,39 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         let currentId = '';
         let currentSequence = '';
 
-        lines.forEach(line => {
-            line = line.trim();
-            if (line.startsWith('>')) {
-                if (currentId) {
-                    sequences.push({ id: currentId, sequence: currentSequence });
-                }
-                currentId = line.substring(1);
-                currentSequence = '';
-            } else if (line) {
-                currentSequence += line;
-            }
-        });
+        // Check if it's tab-delimited format (no '>' prefix)
+        const firstNonEmptyLine = lines.find(line => line.trim().length > 0);
+        const isTabDelimited = firstNonEmptyLine && !firstNonEmptyLine.trim().startsWith('>');
 
-        if (currentId) {
-            sequences.push({ id: currentId, sequence: currentSequence });
+        if (isTabDelimited) {
+            // Parse tab-delimited format
+            lines.forEach(line => {
+                line = line.trim();
+                if (line) {
+                    const [id, sequence] = line.split(/\s+/);
+                    if (id && sequence) {
+                        sequences.push({ id, sequence });
+                    }
+                }
+            });
+        } else {
+            // Parse standard FASTA format
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.startsWith('>')) {
+                    if (currentId) {
+                        sequences.push({ id: currentId, sequence: currentSequence });
+                    }
+                    currentId = line.substring(1);
+                    currentSequence = '';
+                } else if (line) {
+                    currentSequence += line;
+                }
+            });
+
+            if (currentId) {
+                sequences.push({ id: currentId, sequence: currentSequence });
+            }
         }
 
         return sequences;
