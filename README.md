@@ -16,8 +16,8 @@ my-fasta-viewer是一个基于React的FASTA序列可视化和编辑工具，提�
 ### 开发环境
 
 ```bash
-# 克隆项目
-git clone https://github.com/yourusername/my-fasta-viewer.git
+# 克隆代码仓库
+git clone https://github.com/xuzhougeng/simple-msa-viewer.git
 
 # 安装依赖
 cd my-fasta-viewer
