@@ -70,23 +70,20 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         setPastedSequence('');
     };
 
-    const addToHistory = (action) => {
+    const addToHistory = useCallback((action) => {
         setHistory(prev => [...prev, action]);
-    };
+    }, []);
 
-    const undo = () => {
+    const undo = useCallback(() => {
         if (history.length > 0) {
             const lastAction = history[history.length - 1];
-            // Implement the reverse of the last action
-            // This is a simplified example, you'll need to implement the actual undo logic
             if (lastAction.type === 'setSequences') {
                 setSequences(lastAction.prevValue);
             }
-            // Add more action types as needed
-
             setHistory(prev => prev.slice(0, -1));
         }
-    };
+    }, [history]);
+
     const deleteSelectedColumns = useCallback(() => {
         if (highlightedColumns.length === 0) {
             alert('No columns selected. Please highlight columns to delete.');
