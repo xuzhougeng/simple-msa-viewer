@@ -1,6 +1,25 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Search, ChevronLeft, ChevronRight, Upload, ArrowDown, ArrowUp, Trash2, ChevronsDown, ChevronsUp, XCircle, Clipboard, ChevronDown, ChevronUp, ArrowRight, Eraser, Download } from 'lucide-react';
 
+const aminoAcidColors = {
+    'A': '#80a0f0', 'R': '#f01505', 'N': '#00ff00', 'D': '#c048c0',
+    'C': '#f08080', 'Q': '#00ff00', 'E': '#c048c0', 'G': '#f09048',
+    'H': '#15a4a4', 'I': '#80a0f0', 'L': '#80a0f0', 'K': '#f01505',
+    'M': '#80a0f0', 'F': '#80a0f0', 'P': '#ffff00', 'S': '#00ff00',
+    'T': '#00ff00', 'W': '#80a0f0', 'Y': '#15a4a4', 'V': '#80a0f0',
+    '-': '#ffffff'
+};
+
+const nucleotideColors = {
+    'A': '#ff9999', 'T': '#99ff99', 'G': '#ff9900', 'C': '#9999ff',
+    'U': '#99ff99', '-': '#ffffff'
+};
+
+const getColorForChar = (char, isNucleotide) => {
+    const colorMap = isNucleotide ? nucleotideColors : aminoAcidColors;
+    return colorMap[char.toUpperCase()] || '#ffffff';
+};
+
 const FASTAViewer = () => {
     const [sequences, setSequences] = useState([]);
     const [history, setHistory] = useState([]);
@@ -352,10 +371,13 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
         const result = searchResults.find(r => r.id === id);
         const highlightRanges = result ? result.matches : [];
 
+        const isNucleotide = /^[ATCGU-]+$/i.test(sequence);
+
         return displayedSequence.split('').map((char, index) => {
             const absoluteIndex = start + index;
             const isHighlighted = highlightRanges.some(([start, end]) => absoluteIndex >= start && absoluteIndex < end);
             const actualPosition = calculateActualPosition(sequence, absoluteIndex);
+            const backgroundColor = getColorForChar(char, isNucleotide);
             return (
                 <td
                     key={index}
@@ -364,6 +386,7 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
                     ${isHighlighted ? 'bg-green-300' : ''}`}
                     onClick={(e) => handleColumnClick(absoluteIndex, e.shiftKey)}
                     title={char !== '-' ? `Actual position: ${actualPosition}` : 'Gap'}
+                    style={{ backgroundColor: backgroundColor }}
                 >
                     {char}
                 </td>
