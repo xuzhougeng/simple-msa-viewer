@@ -1,70 +1,138 @@
-# Getting Started with Create React App
+# my-fasta-viewer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+my-fasta-viewer是一个基于React的FASTA序列可视化和编辑工具，提供直观的界面来查看、编辑和分析FASTA格式的序列数据。
 
-## Available Scripts
+## 功能特点
 
-In the project directory, you can run:
+- 序列可视化：直观地查看和编辑FASTA序列
+- 序列搜索：快速查找特定序列片段
+- 位置跳转：迅速定位到序列的指定位置
+- 列管理：选择、删除和操作序列中的特定列
+- 导出功能：将编辑后的序列导出为FASTA文件
+- 自适应布局：支持各种屏幕尺寸的响应式显示
 
-### `npm start`
+## 快速开始
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 开发环境
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+# 克隆项目
+git clone https://github.com/yourusername/my-fasta-viewer.git
 
-### `npm test`
+# 安装依赖
+cd my-fasta-viewer
+npm install
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# 启动开发服务器
+npm start
+```
 
-### `npm run build`
+开发服务器启动后，访问 [http://localhost:3000](http://localhost:3000) 查看应用。
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 生产部署
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. 构建生产版本：
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm run build
+```
 
-### `npm run eject`
+2. 部署方式：
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### 方式一：使用 nginx
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /path/to/my-fasta-viewer/build;
+    index index.html;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### 方式二：使用 Docker
 
-## Learn More
+```dockerfile
+FROM node:16 AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+构建并运行Docker容器：
 
-### Code Splitting
+```bash
+docker build -t my-fasta-viewer .
+docker run -d -p 80:80 my-fasta-viewer
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 使用指南
 
-### Analyzing the Bundle Size
+### 1. 数据输入
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- **加载示例**：点击"Load Demo"按钮加载示例数据
+- **上传文件**：点击"Upload FASTA"上传本地FASTA文件
+- **粘贴输入**：直接将序列粘贴到文本框中
 
-### Making a Progressive Web App
+### 2. 基本操作
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **序列导航**：
+  - 使用页面底部的导航按钮在序列间移动
+  - 输入位置编号快速跳转到特定位置
 
-### Advanced Configuration
+- **搜索功能**：
+  - 在搜索框输入序列片段
+  - 按Enter或点击搜索图标开始搜索
+  - 搜索结果会高亮显示
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **序列编辑**：
+  - 选择列：单击或按住Shift多选
+  - 删除列：选中后点击"Delete Selected Columns"
+  - 清除高亮：点击"Clear Highlights"
 
-### Deployment
+### 3. 快捷键
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- `Ctrl + Z`: 撤销上一步操作
+- `Enter`: 触发搜索或跳转操作
+- `Delete`: 删除选中的列
+- `Shift + Click`: 多选列
 
-### `npm run build` fails to minify
+### 4. 注意事项
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- 确保FASTA序列格式正确
+- 大型序列可能需要较长加载时间
+- 建议定期保存工作成果
+
+## 技术栈
+
+- React
+- Tailwind CSS
+- lucide-react (图标)
+
+## 贡献指南
+
+1. Fork 项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交改动 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 提交 Pull Request
+
+## 问题反馈
+
+如有问题或建议，请联系：xuzhougeng@163.com
+
+## License
+
+MIT License
+
