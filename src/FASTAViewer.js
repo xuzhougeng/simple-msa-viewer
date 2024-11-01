@@ -125,17 +125,11 @@ AANG010710 -----------------------MLSH-----------CFA-----------------YQAVTAPC---
             }
         };
 
-        const handlePaste = (event) => {
-            if (!isInputExpanded && event.ctrlKey && event.key === 'v') {
-                event.preventDefault();
-                const pastedText = event.clipboardData.getData('text');
-                setSearchTerm(prev => prev + pastedText);
-            } else {
-                const pastedText = event.clipboardData.getData('text');
-                setPastedSequence(prev => prev + pastedText);
-                event.preventDefault();
-            }
-        };
+    const handlePaste = (event) => {
+        const pastedText = event.clipboardData.getData('text');
+        setPastedSequence(prev => prev + pastedText);
+        event.preventDefault();
+    };
 
         const handleKeyUp = (event) => {
             if (event.key === 'Shift') {
